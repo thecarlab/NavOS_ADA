@@ -1,0 +1,41 @@
+version: '3.8'
+
+services:
+  f1tenth:
+    image: ada:foxy
+    container_name: f1tenth_container
+    privileged: true
+    network_mode: "host"
+    runtime: nvidia
+    ipc: host
+    environment:
+      - DISPLAY=${DISPLAY}
+    volumes:
+      - /tmp/.X11-unix/:/tmp/.X11-unix
+      - /dev:/dev
+      - /lib/aarch64-linux-gnu/libffi.so.8.1.0:/lib/aarch64-linux-gnu/libffi.so.8.1.0:ro
+      - /lib/aarch64-linux-gnu/libffi.so.8:/lib/aarch64-linux-gnu/libffi.so.8:ro
+      - /home/ada1/f1tenth_ws:/f1tenth_ws
+      - /dev/shm:/dev/shm
+      - ./f1tenth_entrypoint.sh:/entrypoint.sh:ro
+    entrypoint: ["/entrypoint.sh"]
+
+  perception:
+    image: williamhecoin/ada_academy:perception2025v1
+    container_name: ada_perception_container
+    privileged: true
+    network_mode: "host"
+    runtime: nvidia
+    ipc: host
+    shm_size: 6g
+    environment:
+      - DISPLAY=${DISPLAY}
+    volumes:
+      - /tmp/.X11-unix/:/tmp/.X11-unix
+      - /dev:/dev
+      - /lib/aarch64-linux-gnu/libffi.so.8.1.0:/lib/aarch64-linux-gnu/libffi.so.8.1.0:ro
+      - /lib/aarch64-linux-gnu/libffi.so.8:/lib/aarch64-linux-gnu/libffi.so.8:ro
+      - /dev/shm:/dev/shm
+      - /home/ada1/perception_ws:/perception_ws
+      - ./perception_entrypoint.sh:/entrypoint.sh:ro
+    entrypoint: ["/entrypoint.sh"] 
