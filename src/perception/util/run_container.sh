@@ -14,5 +14,5 @@ docker run --rm --runtime nvidia -it \
     -v /lib/aarch64-linux-gnu/libffi.so.8.1.0:/lib/aarch64-linux-gnu/libffi.so.8.1.0:ro \
     -v /lib/aarch64-linux-gnu/libffi.so.8:/lib/aarch64-linux-gnu/libffi.so.8:ro \
     -v /dev/shm:/dev/shm \
-    -v /home/ada1/perception_ws:/perception_ws \
+    -v $HOME/NavOS/src/perception:/perception_ws/src \
     williamhecoin/ada_academy:perception2025v1

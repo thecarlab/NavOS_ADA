@@ -20,6 +20,7 @@ setup(
         'console_scripts': [
             'imu_transformer_node = util.imu_transformer_node:main',
             'lidar_transformer_node = util.lidar_transformer_node:main',
+            'stop_sign_behavior_node = util.stop_sign_behavior_node:main',
         ],
     },
 )

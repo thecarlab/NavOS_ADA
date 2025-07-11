@@ -2,7 +2,7 @@ version: '3.8'
 
 services:
   f1tenth:
-    image: ada:foxy
+    image: ariiees/ada:foxy-f1tenth
     container_name: f1tenth_container
     privileged: true
     network_mode: "host"
@@ -15,10 +15,11 @@ services:
       - /dev:/dev
       - /lib/aarch64-linux-gnu/libffi.so.8.1.0:/lib/aarch64-linux-gnu/libffi.so.8.1.0:ro
       - /lib/aarch64-linux-gnu/libffi.so.8:/lib/aarch64-linux-gnu/libffi.so.8:ro
-      - /home/ada1/f1tenth_ws:/f1tenth_ws
+      - $HOME/ada_system:/f1tenth_ws
       - /dev/shm:/dev/shm
       - ./f1tenth_entrypoint.sh:/entrypoint.sh:ro
     entrypoint: ["/entrypoint.sh"]
+    restart: "no"
 
   perception:
     image: williamhecoin/ada_academy:perception2025v1
@@ -36,6 +37,7 @@ services:
       - /lib/aarch64-linux-gnu/libffi.so.8.1.0:/lib/aarch64-linux-gnu/libffi.so.8.1.0:ro
       - /lib/aarch64-linux-gnu/libffi.so.8:/lib/aarch64-linux-gnu/libffi.so.8:ro
       - /dev/shm:/dev/shm
-      - /home/ada1/perception_ws:/perception_ws
+      - $HOME/NavOS/src/perception:/perception_ws/src
       - ./perception_entrypoint.sh:/entrypoint.sh:ro
     entrypoint: ["/entrypoint.sh"] 
+    restart: "no"

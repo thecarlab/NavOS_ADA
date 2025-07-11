@@ -12,7 +12,9 @@ from ament_index_python.packages import get_package_share_directory
 
 def generate_launch_description():
     # Get package directories
-    sllidar_ros2_dir = get_package_share_directory('sllidar_ros2')
+    sllidar_ros2_dir = get_package_share_directory('sllidar_ros2') 
+    realsense_ros2_dir = get_package_share_directory('realsense2_camera')
+    
     lidar_localization_ros2_dir = get_package_share_directory('lidar_localization_ros2')
     control_center_dir = get_package_share_directory('control_center')
     pure_pursuit_dir = get_package_share_directory('pure_pursuit_controller')
@@ -20,21 +22,14 @@ def generate_launch_description():
     # Launch sllidar_s1
     sllidar_launch = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
-            PathJoinSubstitution([
-                FindPackageShare('sllidar_ros2'),
-                'launch',
-                'sllidar_s1_launch.py'
-            ])
+            os.path.join(sllidar_ros2_dir, 'launch', 'sllidar_s2_launch.py')
         )
     )
+    
     # Launch realsense node
     realsense_launch = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
-            PathJoinSubstitution([
-                FindPackageShare('realsense2_camera'),
-                'launch',
-                'rs_launch.py'
-            ])
+            os.path.join(realsense_ros2_dir, 'launch', 'rs_launch.py')
         ),
         launch_arguments={
             'enable_color': 'true',
@@ -55,7 +50,7 @@ def generate_launch_description():
     )
     
     # Launch RViz2 with localization configuration
-    rviz_config_path = '/home/ada1/ros2_ws/src/lidar_localization_ros2/rviz/localization.rviz'
+    rviz_config_path = '/home/ada2/NavOS/rviz/localization.rviz'
     rviz_node = Node(
         package='rviz2',
         executable='rviz2',
@@ -87,6 +82,15 @@ def generate_launch_description():
         name='control_center_node',
         output='screen'
     )
+    
+    # Launch stop sign behavior node
+    stop_sign_behavior_node = Node(
+        package='util',
+        executable='stop_sign_behavior_node',
+        name='stop_sign_behavior_node',
+        output='screen'
+    )
+    
 
     # Launch pure pursuit controller
     pure_pursuit_launch = IncludeLaunchDescription(
@@ -99,7 +103,7 @@ def generate_launch_description():
         ),
         launch_arguments={
             'config_file': os.path.join(pure_pursuit_dir, 'config', 'pure_pursuit_params.yaml'),
-            'waypoints_file': '/home/ada1/ros2_ws/waypoints.yaml',
+            'waypoints_file': '/home/ada2/NavOS/waypoints/waypoints.yaml',
             'frame_id': 'map'
         }.items()
     )
@@ -111,5 +115,6 @@ def generate_launch_description():
         control_center_node,
         lidar_transform_node,
         lidar_localization_launch, 
-        #pure_pursuit_launch,
+        pure_pursuit_launch,
+        stop_sign_behavior_node
     ]) 

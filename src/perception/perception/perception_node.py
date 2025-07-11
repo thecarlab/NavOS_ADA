@@ -16,7 +16,7 @@ class PerceptionNode(Node):
         self.bridge = CvBridge()
 
         # Load YOLO model
-        self.model = YOLO("/NavOS/src/perception/models/yolo11n.engine")
+        self.model = YOLO("/perception_ws/src/models/yolo11n.engine")
 
         # Declare parameters for topic names
         self.declare_parameter("image_topic", "/camera/camera/color/image_raw")
