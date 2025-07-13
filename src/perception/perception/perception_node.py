@@ -1,104 +1,109 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python3  # Shebang line to specify Python3 interpreter
 
-import rclpy
-from rclpy.node import Node
-from sensor_msgs.msg import Image
-from std_msgs.msg import String
-from cv_bridge import CvBridge
-from ultralytics import YOLO
+import rclpy  # Import ROS2 Python client library
+from rclpy.node import Node  # Import Node class for creating ROS2 nodes
+from sensor_msgs.msg import Image  # Import Image message type for camera data
+from std_msgs.msg import String  # Import String message type for text data
+from cv_bridge import CvBridge  # Import bridge to convert between ROS and OpenCV images
+from ultralytics import YOLO  # Import YOLO object detection library
 
 
-class PerceptionNode(Node):
-    def __init__(self):
-        super().__init__('yolo_node')
+class PerceptionNode(Node):  # Define PerceptionNode class inheriting from ROS2 Node
+    def __init__(self):  # Constructor method to initialize the node
+        # Call parent constructor with node name
 
         # Create CvBridge
-        self.bridge = CvBridge()
+        # Initialize bridge for ROS-OpenCV image conversion
 
         # Load YOLO model
-        self.model = YOLO("/perception_ws/src/models/yolo11n.engine")
+        # Load pre-trained YOLO model from file
 
         # Declare parameters for topic names
-        self.declare_parameter("image_topic", "/camera/camera/color/image_raw")
-        self.declare_parameter("inference_image_topic", "/yolo/inference_image")
-        self.declare_parameter("detection_topic", "/yolo/detections")
+        self.declare_parameter("image_topic", "/camera/camera/color/image_raw")  # Declare parameter for input image topic
+        self.declare_parameter("inference_image_topic", "/yolo/inference_image")  # Declare parameter for output annotated image topic
+        self.declare_parameter("detection_topic", "/yolo/detections")  # Declare parameter for detection results topic
 
-        image_topic = self.get_parameter("image_topic").get_parameter_value().string_value
-        inference_image_topic = self.get_parameter("inference_image_topic").get_parameter_value().string_value
+        # Get input topic name from parameter
+        image_topic = self.get_parameter("image_topic").get_parameter_value().string_value 
+        # Get annotated image topic name
+        inference_image_topic = self.get_parameter("inference_image_topic").get_parameter_value().string_value 
+        # Get detection results topic name
         detection_topic = self.get_parameter("detection_topic").get_parameter_value().string_value
 
+
         # Subscribers
-        self.subscription = self.create_subscription(
-            Image,
-            image_topic,
-            self.image_callback,
-            10
-        )
+        # Create subscriber to receive camera images
+        # Message type for camera images
+        # Topic name to subscribe to
+        # Callback function to process received images
+        # Queue size for buffering messages
 
         # Publishers
-        self.image_publisher = self.create_publisher(
-            Image,
-            inference_image_topic,
-            10
-        )
-        self.detection_publisher = self.create_publisher(
-            String,
-            detection_topic,
-            10
-        )
+        # Create publisher for annotated images
+        # Message type for images
+        # Topic name to publish annotated images
+        # Queue size for outgoing messages
+        
+        # Create publisher for detection results
+        # Message type for text data
+        # Topic name to publish detection results
+        # Queue size for outgoing messages
 
-        self.get_logger().info(
-            f"YOLO Inference Node Started. Subscribed to {image_topic}, "
-            f"publishing annotated image to {inference_image_topic} and detections to {detection_topic}"
-        )
+        # Log informational message to console
+        # Format string with subscription info
+        # Format string with publisher info
 
-    def image_callback(self, msg):
-        try:
+    def image_callback(self, msg):  # Callback function triggered when new image arrives
+        # Begin error handling block
             # Convert ROS Image message to OpenCV image
-            cv_image = self.bridge.imgmsg_to_cv2(msg, desired_encoding='bgr8')
-        except Exception as e:
-            self.get_logger().error(f"cv_bridge exception: {e}")
-            return
+            # Convert ROS image to OpenCV format
+        # Catch any conversion errors
+            # Log error message with exception details
+            # Exit function early if conversion fails
 
         # Run YOLO inference
-        results = self.model(cv_image)
+        # Run object detection on the image
 
-        if results:
+        # Check if any results were returned
             # 1️⃣ Publish annotated image for visualization
-            annotated_image = results[0].plot()
-            annotated_msg = self.bridge.cv2_to_imgmsg(annotated_image, encoding='bgr8')
-            self.image_publisher.publish(annotated_msg)
-            #self.get_logger().info("Published annotated inference image.")
+            # Draw bounding boxes and labels on image
+            # Convert annotated image back to ROS format
+            # Publish annotated image to topic
+            # Optional debug message
 
             # 2️⃣ Prepare detection text message for control logic
-            detected_info = []
-            for result in results:
-                if result.boxes and result.boxes.cls is not None:
-                    cls_ids = result.boxes.cls.cpu().numpy()
-                    bboxes = result.boxes.xyxy.cpu().numpy()
-                    confs = result.boxes.conf.cpu().numpy()
+            # Initialize empty list to store detection information
+            # Iterate through each detection result
+                # Check if boxes and classes exist
+                    # Extract class IDs and convert to numpy
+                    # Extract bounding box coordinates
+                    # Extract confidence scores
 
-                    for cls_id, bbox, conf in zip(cls_ids, bboxes, confs):
-                        class_name = self.model.names[int(cls_id)]
-                        x1, y1, x2, y2 = bbox
-                        detected_info.append(
-                            f"{class_name} [{x1:.1f}, {y1:.1f}, {x2:.1f}, {y2:.1f}] ({conf:.2f})"
-                        )
+                    # Iterate through each detection
+                        # Get class name from ID
+                        # Unpack bounding box coordinates
+                        # Add detection info to list
+                            # Format detection string
 
-            if detected_info:
-                detection_msg = "; ".join(detected_info)
-            else:
-                detection_msg = "no detections"
+            # Check if any detections were found
+                # Join all detections into single string
+            # If no detections found
+                # Set message to indicate no detections
 
-            self.detection_publisher.publish(String(data=detection_msg))
-            #self.get_logger().info(f"Published detections: {detection_msg}")
+            # Publish detection results as string
+            # Optional debug message
 
-        else:
-            self.get_logger().info("No detections found in this frame.")
-            self.detection_publisher.publish(String(data="no detections"))
+        # If no results returned from YOLO
+            # Log that no detections were found
+            # Publish empty detection message
 
 
-def main(args=None):
+def main(args=None):  # Main function to run the node
+    # Initialize ROS2 communication
+    # Create instance of PerceptionNode
+    # Keep node running and processing callbacks
+    # Clean up node resources
+    # Shutdown ROS2 communication
     rclpy.init(args=args)
     node = PerceptionNode()
     rclpy.spin(node)
