@@ -1,6 +1,6 @@
 # Every Day Recap
 1. Day 1 summarization is in day1sum.md
-2. Day 2 summarization is in day2sum.md
+
 ## NavOS System Launch
 1. Control and Perception Container Launch
 
@@ -35,7 +35,7 @@ ros2 launch f1tenth_stack bringup_launch.py
 ```
 2. Launch LiDAR sensor (local)
 ```
-ros2 launch sllidar_ros2 sllidar_s1_launch.py
+ros2 launch sllidar_ros2 sllidar_s2_launch.py
 ```
 3. Launch Camera (local)
 ```
@@ -44,14 +44,4 @@ ros2 run realsense2_camera realsense2_camera_node
   More launch options for camera with IMU.
 ```
 ros2 launch realsense2_camera rs_launch.py enable_color:=true enable_depth:=true enable_gyro:=true enable_accel:=true unite_imu_method:=2
-```
-4. Launch Perception Yolo in the container
-```
-cd perception_ws/python_examples
-./run_container.sh
-```
-In the container, do:
-```
-source install/setup.bash
-ros2 run ada_perception perception_node
 ```
