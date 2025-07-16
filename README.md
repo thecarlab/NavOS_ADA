@@ -1,3 +1,6 @@
+# Friday Cheetsheet
+Check cheetsheet.md file.
+
 # Every Day Recap
 1. Day 1 summarization is in day1sum.md
 
