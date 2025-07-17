@@ -28,6 +28,7 @@ ros2 run control_center control_center_node
 
 ### Start Visualization [Terminal 5]
 ```
+sudo -i
 ros2 run rviz2 rviz2 -d /home/adaX/NavOS/rviz/ada.rviz
 ```
 
