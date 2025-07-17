@@ -65,9 +65,8 @@ sudo -i
 ros2 topic pub -1 /load_path std_msgs/msg/Bool "{data: true}"
 ```
 
-### Stop Sign Stop [Terminal 9]
+### Stop Sign Stop [Terminal 9] (same terminal with load path)
 ```
-sudo -i
 ros2 run util stop_sign_behavior_node
 ```
 
