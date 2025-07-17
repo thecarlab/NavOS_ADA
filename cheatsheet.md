@@ -61,6 +61,7 @@ ros2 launch pure_pursuit_controller path_loader.launch.py waypoints_file:=/home/
 ### load path [Terminal 9]
 After path loader is started
 ```
+sudo -i
 ros2 topic pub -1 /load_path std_msgs/msg/Bool "{data: true}"
 ```
 
