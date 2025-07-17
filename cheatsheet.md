@@ -57,6 +57,12 @@ In same terminal, then start path loader.
 ros2 launch pure_pursuit_controller path_loader.launch.py waypoints_file:=/home/ada4/NavOS/waypoints/YourTeamName.yaml
 ```
 
+### load path [Terminal 9]
+After path loader is started
+```
+ros2 topic pub -1 /load_path std_msgs/msg/Bool "{data: true}"
+```
+
 ### Stop Sign Stop [Terminal 9]
 ```
 sudo -i
