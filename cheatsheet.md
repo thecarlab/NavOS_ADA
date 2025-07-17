@@ -1,6 +1,6 @@
-!!!Confirm joystick, camera and Lidar is connected. You can disconnect VESC for connecting wireless keyboard.
-
 # System Bringup Command
+
+## !!!Confirm joystick, camera and Lidar is connected. You can disconnect VESC for connecting wireless keyboard.
 ### Camera [Terminal 1]
 ```
 sudo -i
@@ -70,7 +70,7 @@ sudo -i
 ros2 run util core_behavior_node
 ```
 
-!!! Connecting VESC
+## !!! Connecting VESC
 ### Lower Chassis Control and Perception [Terminal 11]
 ```
 cd ~/NavOS/src/ada/launch
